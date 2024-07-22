@@ -62,50 +62,8 @@
             <button id="stopBtn" disabled>Stop</button>
             <br><br>
             <audio id="audioPlayback" controls></audio>
-            <p id="urll"></p>
         </div>
     </section>
-    <section class="footer">
 
-    </section>
-    <script>
-        let mediaRecorder;
-        let audioChunks = [];
-
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const audioPlayback = document.getElementById('audioPlayback');
-
-        startBtn.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                
-                mediaRecorder.ondataavailable = (event) => {
-                    audioChunks.push(event.data);
-                };
-
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    document.getElementById('urll').innerHTML=audioUrl;
-                    audioPlayback.src = audioUrl;
-                    // audioChunks = [];
-                };
-
-                mediaRecorder.start();
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
-            } catch (err) {
-                console.error('Error accessing media devices.', err);
-            }
-        });
-
-        stopBtn.addEventListener('click', () => {
-            mediaRecorder.stop();
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        });
-    </script>
 </body>
 </html>
