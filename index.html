@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice Conversion</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+	<!-- <link rel="stylesheet" href="common.css"> -->
+	<!-- <link rel="stylesheet" href="home.css"> -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+	<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/solid.js" integrity="sha384-/BxOvRagtVDn9dJ+JGCtcofNXgQO/CCCVKdMfL115s3gOgQxWaX/tSq5V8dRgsbc" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.15.4/js/fontawesome.js" integrity="sha384-dPBGbj4Uoy1OOpM4+aRGfAOc0W37JkROT+3uynUgTHZCHZNMHfGXsmmvYTffZjYO" crossorigin="anonymous"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<style>
+.header{
+    background-color: darkblue;
+    color: cornflowerblue;
+    padding: 30px 0px 30px 0px;
+}
+.cont{
+    background-color:cornflowerblue;
+    width:100%;
+}
+.cont div{
+    width: 50%;
+    padding: 50px 30px 50px 30px;
+    border: 1px solid black;
+    background-color:cornflowerblue;
+    float: left;
+    height: 800px;
+}
+.cont div img{
+    background: transparent;
+}
+.footer{
+    background-color: darkblue;
+}
+</style>
+<body>
+
+    <section class="header">
+        <h1 style="padding-left:30px ;"> GPT++</h1>
+    </section>
+    <section class="cont">
+        <div>
+            <h3>The advance voice bots are here !!!</h3>
+            <p>Ask anything through speech and get the response in speech.</p>
+        </div>
+        <div>
+            <!-- <form action="generate">
+                <input type="" name="query">
+            </form> -->
+            <h3>Ask your Query Here !</h3>
+            <button id="startBtn">Record</button>
+            <button id="stopBtn" disabled>Stop</button>
+            <br><br>
+            <audio id="audioPlayback" controls></audio>
+            <p id="urll"></p>
+        </div>
+    </section>
+    <section class="footer">
+
+    </section>
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const audioPlayback = document.getElementById('audioPlayback');
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    document.getElementById('urll').innerHTML=audioUrl;
+                    audioPlayback.src = audioUrl;
+                    // audioChunks = [];
+                };
+
+                mediaRecorder.start();
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } catch (err) {
+                console.error('Error accessing media devices.', err);
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            mediaRecorder.stop();
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
